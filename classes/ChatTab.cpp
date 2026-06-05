@@ -51,8 +51,6 @@ static Element RenderSingleMessage(const ChatMessage& msg, int term_width) {
 }
 
 
-
-
 ChatTab::ChatTab() {
     input_text_ = "";
     input_component_ = Input(&input_text_, "Введите сообщение...");
@@ -187,7 +185,6 @@ Element ChatTab::RenderMessages() {
         content_height_ = 1;
     }
 
-    // Автопрокрутка вниз
     if (auto_scroll_) {
         scroll_offset_ = std::max(0, content_height_ - 1);
     }

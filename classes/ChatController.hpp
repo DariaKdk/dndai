@@ -1,6 +1,6 @@
 /**
 * @file ChatController.hpp
- * @brief Связывает ChatTab (UI) и LLamaInterface.
+ * @brief Контроллер, связывающий ChatTab и LLamaInterface.
  */
 
 #pragma once
@@ -14,26 +14,43 @@
 class CharList;
 class DiceRoll;
 
-/// @brief Контроллер чата: обрабатывает отправку, запускает генерацию в отдельном потоке.
+/**
+ * @brief Контроллер чата: обрабатывает отправку, запускает генерацию в отдельном потоке.
+ *
+ * При получении сообщения от ChatTab формирует контекст (персонаж + бросок),
+ * запускает асинхронную генерацию ответа и передаёт токены обратно в чат.
+ */
 class ChatController {
 public:
+    /**
+     * @brief Конструктор.
+     * @param model_path Путь к GGUF‑файлу языковой модели.
+     * @throws LLamaLoadError Если модель не удалось загрузить.
+     */
     explicit ChatController(const std::string& model_path);
+
     ~ChatController();
 
+    /// @brief Возвращает указатель на объект ChatTab (для встраивания в UI).
     std::shared_ptr<ChatTab> GetChatTab();
+
+    /// @brief Возвращает ссылку на внутренний объект LLamaInterface (для низкоуровневого доступа).
     LLamaInterface& GetLLama();
 
+    /// @brief Устанавливает указатель на CharList для получения JSON персонажа.
     void SetCharList(CharList* char_list);
+
+    /// @brief Устанавливает указатель на DiceRoll для получения последнего броска.
     void SetDiceRoll(DiceRoll* dice_roll);
 
 private:
-    void OnUserSend(const std::string& text);
-    std::string BuildContext() const;
+    void OnUserSend(const std::string& text);          ///< Обработчик отправленного сообщения.
+    std::string BuildContext() const;                  ///< Формирует строку с персонажем и броском.
 
-    LLamaInterface llama_;
-    std::shared_ptr<ChatTab> chat_tab_;
-    std::thread generation_thread_;
+    LLamaInterface llama_;                             ///< Интерфейс к LLM.
+    std::shared_ptr<ChatTab> chat_tab_;                ///< Вкладка чата.
+    std::thread generation_thread_;                    ///< Поток для асинхронной генерации.
 
-    CharList* char_list_ = nullptr;
-    DiceRoll* dice_roll_ = nullptr;
+    CharList* char_list_ = nullptr;   ///< Указатель на редактор персонажей (не владеет).
+    DiceRoll* dice_roll_ = nullptr;   ///< Указатель на виджет броска кубика (не владеет).
 };

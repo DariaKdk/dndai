@@ -150,14 +150,14 @@ std::string LLamaInterface::Chat(const std::string& user_message,
     }
 
     messages_.push_back({"user", user_message});
-    // Ограничиваем историю последними 6 сообщениями (не считая системного)
+
     const size_t MAX_MESSAGES = 6;
     while (messages_.size() > MAX_MESSAGES) {
-        messages_.erase(messages_.begin());                 // удаляем самое старое
+        messages_.erase(messages_.begin());
         prev_template_len_ = 0;
         if (ctx_) {
             auto* mem = llama_get_memory(ctx_);
-            if (mem) llama_memory_seq_rm(mem, 0, 0, -1);   // чистим KV-кэш
+            if (mem) llama_memory_seq_rm(mem, 0, 0, -1);
         }
     }
 
@@ -165,7 +165,6 @@ std::string LLamaInterface::Chat(const std::string& user_message,
         const auto* vocab = llama_model_get_vocab(model_);
         const char* tmpl  = llama_model_chat_template(model_, nullptr);
 
-        // --- собираем llama_chat_message[] ---
         std::vector<llama_chat_message> chat;
         std::vector<std::string> role_store;
         std::vector<std::string> content_store;
