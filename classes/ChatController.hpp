@@ -18,7 +18,7 @@ class DiceRoll;
  * @brief Контроллер чата: обрабатывает отправку, запускает генерацию в отдельном потоке.
  *
  * При получении сообщения от ChatTab формирует контекст (персонаж + бросок),
- * запускает асинхронную генерацию ответа и передаёт токены обратно в чат.
+ * запускает генерацию ответа и передаёт токены обратно в чат.
  */
 class ChatController {
 public:
@@ -31,10 +31,10 @@ public:
 
     ~ChatController();
 
-    /// @brief Возвращает указатель на объект ChatTab (для встраивания в UI).
+    /// @brief Возвращает указатель на объект ChatTab.
     std::shared_ptr<ChatTab> GetChatTab();
 
-    /// @brief Возвращает ссылку на внутренний объект LLamaInterface (для низкоуровневого доступа).
+    /// @brief Возвращает ссылку на внутренний объект LLamaInterface.
     LLamaInterface& GetLLama();
 
     /// @brief Устанавливает указатель на CharList для получения JSON персонажа.
@@ -51,6 +51,6 @@ private:
     std::shared_ptr<ChatTab> chat_tab_;                ///< Вкладка чата.
     std::thread generation_thread_;                    ///< Поток для асинхронной генерации.
 
-    CharList* char_list_ = nullptr;   ///< Указатель на редактор персонажей (не владеет).
-    DiceRoll* dice_roll_ = nullptr;   ///< Указатель на виджет броска кубика (не владеет).
+    CharList* char_list_ = nullptr;   ///< Указатель на редактор персонажей.
+    DiceRoll* dice_roll_ = nullptr;   ///< Указатель на виджет броска кубика.
 };

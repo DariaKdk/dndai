@@ -13,7 +13,7 @@
 using namespace ftxui;
 
 /**
- * @brief Вкладка броска d20: ASCII‑анимация пятиугольной кости.
+ * @brief Вкладка броска d20
  *
  * При нажатии кнопки генерирует случайное число от 1 до 20,
  * проигрывает анимацию смены чисел и отображает финальный результат.
@@ -29,11 +29,11 @@ public:
     int GetLastRoll() const;
 
 private:
-    Element RenderDie(int number) const;  ///< Рисует ASCII‑кубик с заданным числом.
+    Element RenderDie(int number) const;  ///< Рисует шестиугольник с заданным числом.
 
-    int display_number_ = 1;     ///< Число, отображаемое в данный момент (в анимации или финал).
+    int display_number_ = 1;     ///< Число, отображаемое в данный момент.
     int last_roll_ = 0;          ///< Результат последнего завершённого броска.
-    bool rolling_ = false;       ///< Идёт ли анимация.
+    bool rolling_ = false;       ///< Идет ли анимация.
     std::vector<int> anim_numbers_;  ///< Массив промежуточных чисел для анимации.
     int anim_result_ = 0;            ///< Финальный результат броска.
     std::chrono::steady_clock::time_point anim_start_;  ///< Момент начала анимации.

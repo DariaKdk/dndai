@@ -47,7 +47,7 @@ public:
     using LLamaException::LLamaException;
 };
 
-/// @brief Не хватает места в контексте (переполнение KV‑кэша).
+/// @brief Не хватает места в контексте.
 class LLamaContextOverflowError : public LLamaException {
 public:
     using LLamaException::LLamaException;
@@ -92,7 +92,6 @@ public:
     LLamaInterface();
     ~LLamaInterface();
 
-    // Запрещаем копирование, разрешаем перемещение
     LLamaInterface(const LLamaInterface&) = delete;
     LLamaInterface& operator=(const LLamaInterface&) = delete;
     LLamaInterface(LLamaInterface&&) noexcept;
@@ -111,7 +110,7 @@ public:
     /// @brief Выгрузить модель и освободить ресурсы.
     void Unload();
 
-    /// @brief Установить системный промпт (инструкции для модели).
+    /// @brief Установить системный промпт.
     void SetSystemPrompt(const std::string& prompt);
 
     /**
@@ -126,7 +125,7 @@ public:
                      TokenCallback callback = nullptr);
 
     /**
-     * @brief Сохранить состояние (KV‑кэш и историю) в файлы.
+     * @brief Сохранить состояние  в файлы.
      * @param base_path Базовое имя файла (к нему добавятся .state и .history).
      * @throws LLamaNotLoadedError, LLamaStateError.
      */
@@ -139,7 +138,7 @@ public:
      */
     void LoadState(const std::string& base_path);
 
-    /// @brief Очистить историю диалога и KV‑кэш.
+    /// @brief Очистить историю диалога.
     void ClearHistory();
 
     /// @brief Вернуть путь к загруженной модели.

@@ -34,7 +34,6 @@ struct Character {
  * @brief Вкладка со списком персонажей D&D.
  *
  * Позволяет создавать, редактировать, удалять персонажей, сохранять и загружать их в/из JSON‑файла.
- * Является компонентом FTXUI, может быть встроен в интерфейс.
  */
 class CharList : public ComponentBase {
 public:
@@ -42,15 +41,13 @@ public:
 
     /**
      * @brief Сохраняет всех персонажей в JSON‑файл.
-     * @param path Путь к файлу (например, "characters.json").
-     * @throws std::runtime_error Если файл не удаётся открыть.
+     * @param path Путь к файлу
      */
     void SaveToFile(const std::string& path) const;
 
     /**
      * @brief Загружает персонажей из JSON‑файла.
      * @param path Путь к файлу.
-     * @throws std::runtime_error Если файл не удаётся открыть или JSON некорректен.
      */
     void LoadFromFile(const std::string& path);
 
@@ -78,7 +75,6 @@ private:
     std::vector<std::string> equipment_;  ///< Временный список снаряжения для редактора.
     int sel_equip_ = 0;                   ///< Выбранный элемент в списке снаряжения.
 
-    // Компоненты FTXUI
     Component name_in_, race_in_, class_in_, level_in_;
     Component str_in_, dex_in_, con_in_, intel_in_, wis_in_, cha_in_;
     Component hp_max_in_, hp_cur_in_, ac_in_, speed_in_;
@@ -90,6 +86,6 @@ private:
     Component save_btn_, load_btn_;
     Component add_equip_btn_, del_equip_btn_;
 
-    int scroll_offset_ = 0;    ///< Текущее смещение прокрутки (для vscroll).
-    int content_height_ = 0;   ///< Высота контента (используется для прокрутки).
+    int scroll_offset_ = 0;    ///< Текущее смещение прокрутки
+    int content_height_ = 0;   ///< Высота контента
 };
