@@ -1,28 +1,21 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.24)
 project(DnDai)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(SOURCES
-        main.cpp
-
+set(LIB_SOURCES
         classes/ChatTab.cpp
         classes/ChatTab.hpp
-
         classes/LLamaInterface.cpp
         classes/LLamaInterface.hpp
-
         classes/ChatController.cpp
         classes/ChatController.hpp
-
         classes/CharList.cpp
         classes/CharList.hpp
-
         classes/DiceRoll.cpp
         classes/DiceRoll.hpp
 )
-
 
 include(FetchContent)
 
@@ -57,19 +50,27 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/ggml-org/llama.cpp.git
         GIT_TAG        b9460
 )
-FetchContent_GetProperties(llama.cpp)
-
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(llama.cpp)
 
-add_executable(DnDai ${SOURCES})
+add_library(DnDai_lib ${LIB_SOURCES})
+target_link_libraries(DnDai_lib PRIVATE llama ggml ggml-base ggml-cpu)
+target_link_libraries(DnDai_lib PUBLIC ftxui::screen ftxui::dom ftxui::component nlohmann_json::nlohmann_json)
 
-target_link_libraries(DnDai PRIVATE llama ggml ggml-base ggml-cpu)
+add_executable(DnDai main.cpp)
+target_link_libraries(DnDai PRIVATE DnDai_lib)
 
-target_link_libraries(DnDai PRIVATE
-        ftxui::screen
-        ftxui::dom
-        ftxui::component
+enable_testing()
+
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-target_link_libraries(DnDai PRIVATE nlohmann_json::nlohmann_json)
+add_executable(run_tests tests/test_main.cpp)
+target_link_libraries(run_tests PRIVATE DnDai_lib GTest::gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(run_tests)
