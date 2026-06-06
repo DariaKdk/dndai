@@ -17,51 +17,50 @@ LLamaInterface::~LLamaInterface() {
     FreeResources();
 }
 
-LLamaInterface::LLamaInterface(LLamaInterface&& other) noexcept
+LLamaInterface::LLamaInterface(LLamaInterface &&other) noexcept
     : model_(other.model_)
-    , ctx_(other.ctx_)
-    , sampler_(other.sampler_)
-    , config_(std::move(other.config_))
-    , system_prompt_(std::move(other.system_prompt_))
-    , messages_(std::move(other.messages_))
-    , prev_template_len_(other.prev_template_len_)
-    , formatted_(std::move(other.formatted_))
-    , n_ctx_(other.n_ctx_)
-{
-    other.model_   = nullptr;
-    other.ctx_     = nullptr;
+      , ctx_(other.ctx_)
+      , sampler_(other.sampler_)
+      , config_(std::move(other.config_))
+      , system_prompt_(std::move(other.system_prompt_))
+      , messages_(std::move(other.messages_))
+      , prev_template_len_(other.prev_template_len_)
+      , formatted_(std::move(other.formatted_))
+      , n_ctx_(other.n_ctx_) {
+    other.model_ = nullptr;
+    other.ctx_ = nullptr;
     other.sampler_ = nullptr;
-    other.n_ctx_   = 0;
+    other.n_ctx_ = 0;
     other.prev_template_len_ = 0;
 }
 
-LLamaInterface& LLamaInterface::operator=(LLamaInterface&& other) noexcept {
+LLamaInterface &LLamaInterface::operator=(LLamaInterface &&other) noexcept {
     if (this != &other) {
         FreeResources();
-        model_             = other.model_;
-        ctx_               = other.ctx_;
-        sampler_           = other.sampler_;
-        config_            = std::move(other.config_);
-        system_prompt_     = std::move(other.system_prompt_);
-        messages_          = std::move(other.messages_);
+        model_ = other.model_;
+        ctx_ = other.ctx_;
+        sampler_ = other.sampler_;
+        config_ = std::move(other.config_);
+        system_prompt_ = std::move(other.system_prompt_);
+        messages_ = std::move(other.messages_);
         prev_template_len_ = other.prev_template_len_;
-        formatted_         = std::move(other.formatted_);
-        n_ctx_             = other.n_ctx_;
+        formatted_ = std::move(other.formatted_);
+        n_ctx_ = other.n_ctx_;
 
-        other.model_   = nullptr;
-        other.ctx_     = nullptr;
+        other.model_ = nullptr;
+        other.ctx_ = nullptr;
         other.sampler_ = nullptr;
-        other.n_ctx_   = 0;
+        other.n_ctx_ = 0;
         other.prev_template_len_ = 0;
     }
     return *this;
 }
 
-void LLamaInterface::LoadModel(const Config& config) {
+void LLamaInterface::LoadModel(const Config &config) {
     FreeResources();
     config_ = config;
 
-    llama_log_set([](ggml_log_level level, const char*, void*) {
+    llama_log_set([](ggml_log_level level, const char *, void *) {
     }, nullptr);
 
     if (backend_ref_count_ == 0) {
@@ -81,12 +80,12 @@ void LLamaInterface::LoadModel(const Config& config) {
     }
 
     auto ctx_params = llama_context_default_params();
-    ctx_params.n_ctx           = config_.n_ctx;
-    ctx_params.n_batch         = config_.n_ctx;
-    ctx_params.n_seq_max       = 1;
-    ctx_params.n_threads       = config_.n_threads > 0
-        ? config_.n_threads
-        : std::max(1, (int32_t)std::thread::hardware_concurrency());
+    ctx_params.n_ctx = config_.n_ctx;
+    ctx_params.n_batch = config_.n_ctx;
+    ctx_params.n_seq_max = 1;
+    ctx_params.n_threads = config_.n_threads > 0
+                               ? config_.n_threads
+                               : std::max(1, (int32_t) std::thread::hardware_concurrency());
     ctx_params.n_threads_batch = ctx_params.n_threads;
 
     ctx_ = llama_init_from_model(model_, ctx_params);
@@ -123,7 +122,7 @@ bool LLamaInterface::IsLoaded() const {
 
 void LLamaInterface::Unload() { FreeResources(); }
 
-void LLamaInterface::SetSystemPrompt(const std::string& prompt) {
+void LLamaInterface::SetSystemPrompt(const std::string &prompt) {
     system_prompt_ = prompt;
 }
 
@@ -131,20 +130,19 @@ void LLamaInterface::ClearHistory() {
     messages_.clear();
     prev_template_len_ = 0;
     if (ctx_) {
-        auto* mem = llama_get_memory(ctx_);
+        auto *mem = llama_get_memory(ctx_);
         if (mem) llama_memory_seq_rm(mem, 0, 0, -1);
     }
 }
 
-const std::string& LLamaInterface::GetModelPath() const { return config_.model_path; }
+const std::string &LLamaInterface::GetModelPath() const { return config_.model_path; }
 
-const std::vector<std::pair<std::string, std::string>>& LLamaInterface::GetHistory() const {
+const std::vector<std::pair<std::string, std::string> > &LLamaInterface::GetHistory() const {
     return messages_;
 }
 
-std::string LLamaInterface::Chat(const std::string& user_message,
-                                 TokenCallback callback)
-{
+std::string LLamaInterface::Chat(const std::string &user_message,
+                                 TokenCallback callback) {
     if (!IsLoaded()) {
         throw LLamaNotLoadedError("Chat(): модель не загружена.");
     }
@@ -156,14 +154,14 @@ std::string LLamaInterface::Chat(const std::string& user_message,
         messages_.erase(messages_.begin());
         prev_template_len_ = 0;
         if (ctx_) {
-            auto* mem = llama_get_memory(ctx_);
+            auto *mem = llama_get_memory(ctx_);
             if (mem) llama_memory_seq_rm(mem, 0, 0, -1);
         }
     }
 
     try {
-        const auto* vocab = llama_model_get_vocab(model_);
-        const char* tmpl  = llama_model_chat_template(model_, nullptr);
+        const auto *vocab = llama_model_get_vocab(model_);
+        const char *tmpl = llama_model_chat_template(model_, nullptr);
 
         std::vector<llama_chat_message> chat;
         std::vector<std::string> role_store;
@@ -173,7 +171,7 @@ std::string LLamaInterface::Chat(const std::string& user_message,
             role_store.push_back("system");
             content_store.push_back(system_prompt_);
         }
-        for (const auto& [r, c] : messages_) {
+        for (const auto &[r, c]: messages_) {
             role_store.push_back(r);
             content_store.push_back(c);
         }
@@ -222,8 +220,7 @@ std::string LLamaInterface::Chat(const std::string& user_message,
         if (llama_tokenize(
                 vocab, delta.c_str(), delta.size(),
                 tokens.data(), tokens.size(),
-                is_first, true) < 0)
-        {
+                is_first, true) < 0) {
             throw LLamaTokenizeError("Chat(): llama_tokenize failed.");
         }
 
@@ -234,9 +231,10 @@ std::string LLamaInterface::Chat(const std::string& user_message,
         llama_token new_token_id = LLAMA_TOKEN_NULL;
 
         while (n_decoded < config_.max_tokens) {
-            auto* mem = llama_get_memory(ctx_);
+            auto *mem = llama_get_memory(ctx_);
             const int n_used = mem
-                ? llama_memory_seq_pos_max(mem, 0) + 1 : 0;
+                                   ? llama_memory_seq_pos_max(mem, 0) + 1
+                                   : 0;
 
             if (n_used + batch.n_tokens > static_cast<int>(n_ctx_)) {
                 throw LLamaContextOverflowError(
@@ -281,7 +279,7 @@ std::string LLamaInterface::Chat(const std::string& user_message,
             role_store.push_back("system");
             content_store.push_back(system_prompt_);
         }
-        for (const auto& [r, c] : messages_) {
+        for (const auto &[r, c]: messages_) {
             role_store.push_back(r);
             content_store.push_back(c);
         }
@@ -296,17 +294,16 @@ std::string LLamaInterface::Chat(const std::string& user_message,
         }
 
         return response;
-
     } catch (...) {
         messages_.pop_back();
         throw;
     }
 }
 
-void LLamaInterface::SaveState(const std::string& base_path) const {
+void LLamaInterface::SaveState(const std::string &base_path) const {
     if (!IsLoaded()) throw LLamaNotLoadedError("SaveState(): модель не загружена.");
 
-    const std::string state_path   = base_path + ".state";
+    const std::string state_path = base_path + ".state";
     const std::string history_path = base_path + ".history";
 
     size_t saved = llama_state_seq_save_file(
@@ -318,10 +315,10 @@ void LLamaInterface::SaveState(const std::string& base_path) const {
     SaveHistory(history_path);
 }
 
-void LLamaInterface::LoadState(const std::string& base_path) {
+void LLamaInterface::LoadState(const std::string &base_path) {
     if (!IsLoaded()) throw LLamaNotLoadedError("LoadState(): модель не загружена.");
 
-    const std::string state_path   = base_path + ".state";
+    const std::string state_path = base_path + ".state";
     const std::string history_path = base_path + ".history";
 
     LoadHistory(history_path);
@@ -335,7 +332,7 @@ void LLamaInterface::LoadState(const std::string& base_path) {
         throw LLamaStateError("LoadState(): не удалось загрузить: " + state_path);
     }
 
-    const char* tmpl = llama_model_chat_template(model_, nullptr);
+    const char *tmpl = llama_model_chat_template(model_, nullptr);
 
     std::vector<llama_chat_message> chat;
     std::vector<std::string> role_store;
@@ -345,7 +342,7 @@ void LLamaInterface::LoadState(const std::string& base_path) {
         role_store.push_back("system");
         content_store.push_back(system_prompt_);
     }
-    for (const auto& [r, c] : messages_) {
+    for (const auto &[r, c]: messages_) {
         role_store.push_back(r);
         content_store.push_back(c);
     }
@@ -359,9 +356,18 @@ void LLamaInterface::LoadState(const std::string& base_path) {
 }
 
 void LLamaInterface::FreeResources() noexcept {
-    if (sampler_) { llama_sampler_free(sampler_); sampler_ = nullptr; }
-    if (ctx_)     { llama_free(ctx_);             ctx_     = nullptr; }
-    if (model_)   { llama_model_free(model_);     model_   = nullptr; }
+    if (sampler_) {
+        llama_sampler_free(sampler_);
+        sampler_ = nullptr;
+    }
+    if (ctx_) {
+        llama_free(ctx_);
+        ctx_ = nullptr;
+    }
+    if (model_) {
+        llama_model_free(model_);
+        model_ = nullptr;
+    }
 
     messages_.clear();
     system_prompt_.clear();
@@ -392,23 +398,23 @@ void LLamaInterface::BuildSampler() {
     }
 }
 
-void LLamaInterface::SaveHistory(const std::string& path) const {
+void LLamaInterface::SaveHistory(const std::string &path) const {
     std::ofstream file(path, std::ios::binary);
     if (!file) {
         throw LLamaStateError("SaveHistory(): не удалось открыть: " + path);
     }
 
     const uint32_t count = static_cast<uint32_t>(messages_.size());
-    file.write(reinterpret_cast<const char*>(&count), sizeof(count));
+    file.write(reinterpret_cast<const char *>(&count), sizeof(count));
 
-    for (const auto& [role, content] : messages_) {
-        const uint32_t role_len    = static_cast<uint32_t>(role.size());
+    for (const auto &[role, content]: messages_) {
+        const uint32_t role_len = static_cast<uint32_t>(role.size());
         const uint32_t content_len = static_cast<uint32_t>(content.size());
 
-        file.write(reinterpret_cast<const char*>(&role_len), sizeof(role_len));
+        file.write(reinterpret_cast<const char *>(&role_len), sizeof(role_len));
         file.write(role.data(), role_len);
 
-        file.write(reinterpret_cast<const char*>(&content_len), sizeof(content_len));
+        file.write(reinterpret_cast<const char *>(&content_len), sizeof(content_len));
         file.write(content.data(), content_len);
     }
 
@@ -417,14 +423,14 @@ void LLamaInterface::SaveHistory(const std::string& path) const {
     }
 }
 
-void LLamaInterface::LoadHistory(const std::string& path) {
+void LLamaInterface::LoadHistory(const std::string &path) {
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         throw LLamaStateError("LoadHistory(): не удалось открыть: " + path);
     }
 
     uint32_t count = 0;
-    file.read(reinterpret_cast<char*>(&count), sizeof(count));
+    file.read(reinterpret_cast<char *>(&count), sizeof(count));
     if (!file) {
         throw LLamaStateError("LoadHistory(): повреждён заголовок: " + path);
     }
@@ -435,21 +441,25 @@ void LLamaInterface::LoadHistory(const std::string& path) {
     for (uint32_t i = 0; i < count; ++i) {
         uint32_t role_len = 0, content_len = 0;
 
-        file.read(reinterpret_cast<char*>(&role_len), sizeof(role_len));
-        if (!file) throw LLamaStateError(
-            "LoadHistory(): ошибка role_len [" + std::to_string(i) + "]: " + path);
+        file.read(reinterpret_cast<char *>(&role_len), sizeof(role_len));
+        if (!file)
+            throw LLamaStateError(
+                "LoadHistory(): ошибка role_len [" + std::to_string(i) + "]: " + path);
         std::string role(role_len, '\0');
         file.read(role.data(), role_len);
-        if (!file) throw LLamaStateError(
-            "LoadHistory(): ошибка role [" + std::to_string(i) + "]: " + path);
+        if (!file)
+            throw LLamaStateError(
+                "LoadHistory(): ошибка role [" + std::to_string(i) + "]: " + path);
 
-        file.read(reinterpret_cast<char*>(&content_len), sizeof(content_len));
-        if (!file) throw LLamaStateError(
-            "LoadHistory(): ошибка content_len [" + std::to_string(i) + "]: " + path);
+        file.read(reinterpret_cast<char *>(&content_len), sizeof(content_len));
+        if (!file)
+            throw LLamaStateError(
+                "LoadHistory(): ошибка content_len [" + std::to_string(i) + "]: " + path);
         std::string content(content_len, '\0');
         file.read(content.data(), content_len);
-        if (!file) throw LLamaStateError(
-            "LoadHistory(): ошибка content [" + std::to_string(i) + "]: " + path);
+        if (!file)
+            throw LLamaStateError(
+                "LoadHistory(): ошибка content [" + std::to_string(i) + "]: " + path);
 
         messages_.push_back({std::move(role), std::move(content)});
     }

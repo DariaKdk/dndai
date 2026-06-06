@@ -6,9 +6,8 @@
 
 using json = nlohmann::json;
 
-static int ParseInt(const std::string& s, int def = 10) {
-    try { return std::stoi(s); }
-    catch (...) { return def; }
+static int ParseInt(const std::string &s, int def = 10) {
+    try { return std::stoi(s); } catch (...) { return def; }
 }
 
 static std::string ModStr(int score) {
@@ -21,7 +20,7 @@ static std::string ProfStr(int level) {
     return "+" + std::to_string(p);
 }
 
-static Component NumericInput(std::string* content, const std::string& placeholder) {
+static Component NumericInput(std::string *content, const std::string &placeholder) {
     auto input = Input(content, placeholder);
     return input | CatchEvent([](Event e) {
         if (e.is_character()) {
@@ -63,28 +62,28 @@ CharList::CharList() {
 
     prev_btn_ = Button("<", [this] {
         SyncToCharacter();
-        selected_ = (selected_ - 1 + (int)characters_.size()) % (int)characters_.size();
+        selected_ = (selected_ - 1 + (int) characters_.size()) % (int) characters_.size();
         SyncFromCharacter();
     });
 
     next_btn_ = Button(">", [this] {
         SyncToCharacter();
-        selected_ = (selected_ + 1) % (int)characters_.size();
+        selected_ = (selected_ + 1) % (int) characters_.size();
         SyncFromCharacter();
     });
 
     add_btn_ = Button("+Персонаж", [this] {
         SyncToCharacter();
         characters_.push_back(Character());
-        selected_ = (int)characters_.size() - 1;
+        selected_ = (int) characters_.size() - 1;
         SyncFromCharacter();
     });
 
     del_btn_ = Button("Удалить", [this] {
         if (characters_.size() <= 1) return;
         characters_.erase(characters_.begin() + selected_);
-        if (selected_ >= (int)characters_.size())
-            selected_ = (int)characters_.size() - 1;
+        if (selected_ >= (int) characters_.size())
+            selected_ = (int) characters_.size() - 1;
         SyncFromCharacter();
     });
 
@@ -107,10 +106,10 @@ CharList::CharList() {
     });
 
     del_equip_btn_ = Button("-", [this] {
-        if (!equipment_.empty() && sel_equip_ >= 0 && sel_equip_ < (int)equipment_.size()) {
+        if (!equipment_.empty() && sel_equip_ >= 0 && sel_equip_ < (int) equipment_.size()) {
             equipment_.erase(equipment_.begin() + sel_equip_);
-            if (sel_equip_ >= (int)equipment_.size())
-                sel_equip_ = std::max(0, (int)equipment_.size() - 1);
+            if (sel_equip_ >= (int) equipment_.size())
+                sel_equip_ = std::max(0, (int) equipment_.size() - 1);
         }
     });
 
@@ -213,9 +212,9 @@ CharList::CharList() {
         eq.push_back(del_equip_btn_->Render());
 
         auto equip_w = window(text("Снаряжение"), vbox({
-            hbox(eq),
-            equip_menu_->Render() | frame | size(HEIGHT, LESS_THAN, 5),
-        }));
+                                  hbox(eq),
+                                  equip_menu_->Render() | frame | size(HEIGHT, LESS_THAN, 5),
+                              }));
 
         auto bg_w = window(text("Предыстория"), bg_in_->Render() | flex);
 
@@ -230,8 +229,8 @@ CharList::CharList() {
         auto file_bar = hbox(fb) | borderLight;
 
         content_height_ = 3 + 4 + 4 + 3
-            + 2 + std::min((int)equipment_.size(), 5)
-            + 3 + 1 + 4;
+                          + 2 + std::min((int) equipment_.size(), 5)
+                          + 3 + 1 + 4;
 
         scroll_offset_ = std::min(scroll_offset_, std::max(0, content_height_ - 1));
 
@@ -247,10 +246,10 @@ CharList::CharList() {
         page.push_back(text(""));
 
         return vbox(page)
-            | focusPosition(0, scroll_offset_)
-            | vscroll_indicator
-            | frame
-            | flex;
+               | focusPosition(0, scroll_offset_)
+               | vscroll_indicator
+               | frame
+               | flex;
     });
 
     auto scrollable = renderer | CatchEvent([this](Event event) {
@@ -272,8 +271,8 @@ CharList::CharList() {
 }
 
 void CharList::SyncToCharacter() {
-    if (selected_ < 0 || selected_ >= (int)characters_.size()) return;
-    auto& ch = characters_[selected_];
+    if (selected_ < 0 || selected_ >= (int) characters_.size()) return;
+    auto &ch = characters_[selected_];
     ch.name = name_buf_;
     ch.race = race_buf_;
     ch.char_class = class_buf_;
@@ -293,8 +292,8 @@ void CharList::SyncToCharacter() {
 }
 
 void CharList::SyncFromCharacter() {
-    if (selected_ < 0 || selected_ >= (int)characters_.size()) return;
-    const auto& ch = characters_[selected_];
+    if (selected_ < 0 || selected_ >= (int) characters_.size()) return;
+    const auto &ch = characters_[selected_];
     name_buf_ = ch.name;
     race_buf_ = ch.race;
     class_buf_ = ch.char_class;
@@ -315,10 +314,10 @@ void CharList::SyncFromCharacter() {
     scroll_offset_ = 0;
 }
 
-void CharList::SaveToFile(const std::string& path) const {
+void CharList::SaveToFile(const std::string &path) const {
     json j;
     j["characters"] = json::array();
-    for (const auto& c : characters_) {
+    for (const auto &c: characters_) {
         json ch;
         ch["name"] = c.name;
         ch["race"] = c.race;
@@ -345,8 +344,8 @@ void CharList::SaveToFile(const std::string& path) const {
 }
 
 std::string CharList::SaveToJson() const {
-    if (selected_ < 0 || selected_ >= (int)characters_.size()) return "{}";
-    const auto& c = characters_[selected_];
+    if (selected_ < 0 || selected_ >= (int) characters_.size()) return "{}";
+    const auto &c = characters_[selected_];
 
     json ch;
     ch["name"] = c.name;
@@ -369,7 +368,7 @@ std::string CharList::SaveToJson() const {
     return ch.dump(2);
 }
 
-void CharList::LoadFromFile(const std::string& path) {
+void CharList::LoadFromFile(const std::string &path) {
     std::ifstream file(path);
     if (!file) throw std::runtime_error("Не удалось открыть файл: " + path);
 
@@ -377,7 +376,7 @@ void CharList::LoadFromFile(const std::string& path) {
     file >> j;
 
     characters_.clear();
-    for (const auto& ch : j["characters"]) {
+    for (const auto &ch: j["characters"]) {
         Character c;
         c.name = ch.value("name", "Новый персонаж");
         c.race = ch.value("race", "Человек");

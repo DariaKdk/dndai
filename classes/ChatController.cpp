@@ -6,7 +6,7 @@
 using json = nlohmann::json;
 
 static const std::string SYSTEM_PROMPT =
-R"(Ты - Мастер Подземелий (Dungeon Master) в игре Dungeons & Dragons 5e. Ты ведёшь приключение для одного игрока.
+        R"(Ты - Мастер Подземелий (Dungeon Master) в игре Dungeons & Dragons 5e. Ты ведёшь приключение для одного игрока.
 
 === ТВОЯ РОЛЬ ===
 Ты описываешь мир, управляешь NPC, монстрами и сюжетом. Ты не играешь за персонажа игрока. Ты предлагаешь ситуации, конфликты и выборы. Ты ведёшь игру честно - если бросок плохой, так тому и быть.
@@ -62,21 +62,21 @@ R"(Ты - Мастер Подземелий (Dungeon Master) в игре Dungeon
 === НАЧАЛО ИГРЫ ===
 Когда игрок впервые здоровается - начни приключение. Опиши где оказался персонаж и что он видит. Дай зацепку для первого действия.)";
 
-ChatController::ChatController(const std::string& model_path) {
+ChatController::ChatController(const std::string &model_path) {
     chat_tab_ = std::make_shared<ChatTab>();
-    chat_tab_->SetOnSendMessage([this](const std::string& text) {
+    chat_tab_->SetOnSendMessage([this](const std::string &text) {
         OnUserSend(text);
     });
 
     LLamaInterface::Config cfg;
-    cfg.model_path  = model_path;
-    cfg.n_ctx       = 4096;
-    cfg.n_batch     = 512;
+    cfg.model_path = model_path;
+    cfg.n_ctx = 4096;
+    cfg.n_batch = 512;
     cfg.temperature = 0.7f;
-    cfg.top_p       = 0.9f;
-    cfg.top_k       = 40;
-    cfg.n_threads   = -1;
-    cfg.max_tokens  = 2048;
+    cfg.top_p = 0.9f;
+    cfg.top_k = 40;
+    cfg.n_threads = -1;
+    cfg.max_tokens = 2048;
 
     llama_.LoadModel(cfg);
     llama_.SetSystemPrompt(SYSTEM_PROMPT);
@@ -92,15 +92,15 @@ std::shared_ptr<ChatTab> ChatController::GetChatTab() {
     return chat_tab_;
 }
 
-LLamaInterface& ChatController::GetLLama() {
+LLamaInterface &ChatController::GetLLama() {
     return llama_;
 }
 
-void ChatController::SetCharList(CharList* char_list) {
+void ChatController::SetCharList(CharList *char_list) {
     char_list_ = char_list;
 }
 
-void ChatController::SetDiceRoll(DiceRoll* dice_roll) {
+void ChatController::SetDiceRoll(DiceRoll *dice_roll) {
     dice_roll_ = dice_roll;
 }
 
@@ -111,7 +111,8 @@ std::string ChatController::BuildContext() const {
         try {
             std::string json_str = char_list_->SaveToJson();
             ctx += "[ПЕРСОНАЖ]\n" + json_str + "\n[/ПЕРСОНАЖ]\n";
-        } catch (...) {}
+        } catch (...) {
+        }
     }
 
     if (dice_roll_ && dice_roll_->GetLastRoll() > 0) {
@@ -121,7 +122,7 @@ std::string ChatController::BuildContext() const {
     return ctx;
 }
 
-void ChatController::OnUserSend(const std::string& text) {
+void ChatController::OnUserSend(const std::string &text) {
     if (generation_thread_.joinable()) {
         generation_thread_.join();
     }
@@ -133,11 +134,11 @@ void ChatController::OnUserSend(const std::string& text) {
 
     generation_thread_ = std::thread([this, full_message]() {
         try {
-            llama_.Chat(full_message, [this](const std::string& piece) {
+            llama_.Chat(full_message, [this](const std::string &piece) {
                 chat_tab_->AppendToLastMessage(piece);
                 return true;
             });
-        } catch (const LLamaException& e) {
+        } catch (const LLamaException &e) {
             chat_tab_->AppendToLastMessage(
                 "\n[ОШИБКА: " + std::string(e.what()) + "]");
         }

@@ -29,13 +29,13 @@ public:
     int GetLastRoll() const;
 
 private:
-    Element RenderDie(int number) const;  ///< Рисует шестиугольник с заданным числом.
+    Element RenderDie(int number) const; ///< Рисует шестиугольник с заданным числом.
 
-    int display_number_ = 1;     ///< Число, отображаемое в данный момент.
-    int last_roll_ = 0;          ///< Результат последнего завершённого броска.
-    bool rolling_ = false;       ///< Идет ли анимация.
-    std::vector<int> anim_numbers_;  ///< Массив промежуточных чисел для анимации.
-    int anim_result_ = 0;            ///< Финальный результат броска.
-    std::chrono::steady_clock::time_point anim_start_;  ///< Момент начала анимации.
-    Component roll_btn_;             ///< Кнопка «Бросить d20».
+    int display_number_ = 1; ///< Число, отображаемое в данный момент.
+    int last_roll_ = 0; ///< Результат последнего завершённого броска.
+    bool rolling_ = false; ///< Идет ли анимация.
+    std::vector<int> anim_numbers_; ///< Массив промежуточных чисел для анимации.
+    int anim_result_ = 0; ///< Финальный результат броска.
+    std::chrono::steady_clock::time_point anim_start_; ///< Момент начала анимации.
+    Component roll_btn_; ///< Кнопка «Бросить d20».
 };

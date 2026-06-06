@@ -4,7 +4,7 @@
 #include <sstream>
 
 
-static std::vector<std::string> wrap_text(const std::string& text, int max_width) {
+static std::vector<std::string> wrap_text(const std::string &text, int max_width) {
     if (max_width <= 0) return {text};
 
     std::vector<std::string> lines;
@@ -23,7 +23,7 @@ static std::vector<std::string> wrap_text(const std::string& text, int max_width
         while (word_stream >> word) {
             if (current_line.empty()) {
                 current_line = word;
-            } else if ((int)(current_line.length() + 1 + word.length()) <= max_width) {
+            } else if ((int) (current_line.length() + 1 + word.length()) <= max_width) {
                 current_line += " " + word;
             } else {
                 lines.push_back(current_line);
@@ -37,13 +37,13 @@ static std::vector<std::string> wrap_text(const std::string& text, int max_width
     return lines;
 }
 
-static Element RenderSingleMessage(const ChatMessage& msg, int term_width) {
+static Element RenderSingleMessage(const ChatMessage &msg, int term_width) {
     int text_width = std::max(10, term_width - 6);
     auto wrapped = wrap_text(msg.text, text_width);
 
     Elements elements;
     elements.push_back(text(" > " + msg.author) | bold | color(msg.author_color));
-    for (const auto& line : wrapped) {
+    for (const auto &line: wrapped) {
         elements.push_back(text("   " + line) | color(Color::GrayLight));
     }
 
@@ -89,7 +89,7 @@ ChatTab::ChatTab() {
         return false;
     });
 
-    auto input_panel = Container::Horizontal({ input_component_, send_button_ });
+    auto input_panel = Container::Horizontal({input_component_, send_button_});
 
     auto input_renderer = Renderer(input_panel, [this] {
         std::string placeholder = "Введите сообщение...";
@@ -107,18 +107,18 @@ ChatTab::ChatTab() {
         return input_box | borderLight;
     });
 
-    auto main_vertical = Container::Vertical({ messages_view_, input_renderer });
+    auto main_vertical = Container::Vertical({messages_view_, input_renderer});
     Add(main_vertical);
 }
 
 void ChatTab::RebuildMessages() {
-    auto* screen = ScreenInteractive::Active();
+    auto *screen = ScreenInteractive::Active();
     if (screen) {
         screen->PostEvent(Event::Custom);
     }
 }
 
-void ChatTab::AddMessage(const std::string& author, const std::string& text,
+void ChatTab::AddMessage(const std::string &author, const std::string &text,
                          Color author_color) {
     {
         std::lock_guard<std::mutex> lock(messages_mutex_);
@@ -128,7 +128,7 @@ void ChatTab::AddMessage(const std::string& author, const std::string& text,
     RebuildMessages();
 }
 
-void ChatTab::AppendToLastMessage(const std::string& token) {
+void ChatTab::AppendToLastMessage(const std::string &token) {
     {
         std::lock_guard<std::mutex> lock(messages_mutex_);
         if (!messages_.empty()) {
@@ -143,7 +143,7 @@ void ChatTab::SetGenerating(bool generating) {
     RebuildMessages();
 }
 
-void ChatTab::SetOnSendMessage(std::function<void(const std::string&)> callback) {
+void ChatTab::SetOnSendMessage(std::function<void(const std::string &)> callback) {
     on_send_ = std::move(callback);
 }
 
@@ -169,10 +169,10 @@ Element ChatTab::RenderMessages() {
     Elements all_messages;
     int total_height = 0;
 
-    for (const auto& msg : messages_) {
+    for (const auto &msg: messages_) {
         int text_width = std::max(10, term_width - 6);
         auto wrapped = wrap_text(msg.text, text_width);
-        total_height += (int)wrapped.size() + 3;
+        total_height += (int) wrapped.size() + 3;
 
         all_messages.push_back(RenderSingleMessage(msg, term_width));
     }
@@ -193,7 +193,7 @@ Element ChatTab::RenderMessages() {
 
     auto content = vbox(all_messages);
     return content | focusPosition(0, scroll_offset_)
-                   | vscroll_indicator
-                   | frame
-                   | flex;
+           | vscroll_indicator
+           | frame
+           | flex;
 }

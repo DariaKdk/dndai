@@ -21,9 +21,9 @@ DiceRoll::DiceRoll() {
 
         display_number_ = anim_numbers_[0];
 
-        auto* screen = ScreenInteractive::Active();
+        auto *screen = ScreenInteractive::Active();
         std::thread([this, screen]() {
-            for (int i = 1; i < (int)anim_numbers_.size(); i++) {
+            for (int i = 1; i < (int) anim_numbers_.size(); i++) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(80));
                 int num = anim_numbers_[i];
                 screen->PostEvent(Event::Special("d_" + std::to_string(num)));
@@ -97,8 +97,8 @@ int DiceRoll::GetLastRoll() const {
 
 Element DiceRoll::RenderDie(int number) const {
     std::string n = std::to_string(number);
-    int pad_l = (4 - (int)n.size()) / 2;
-    int pad_r = 4 - (int)n.size() - pad_l;
+    int pad_l = (4 - (int) n.size()) / 2;
+    int pad_r = 4 - (int) n.size() - pad_l;
     std::string padded = std::string(pad_l, ' ') + n + std::string(pad_r, ' ');
 
     Color edge = rolling_ ? Color::Yellow : Color::Cyan;

@@ -27,7 +27,7 @@ TEST(CharListTest, InitialStateToJson) {
         EXPECT_EQ(j["hp_current"], 10);
         EXPECT_EQ(j["ac"], 10);
         EXPECT_EQ(j["speed"], 30);
-    });
+        });
 }
 
 TEST(CharListTest, SaveAndLoadFromFile) {
@@ -103,8 +103,8 @@ TEST(LLamaInterfaceTest, ThrowsWhenLoadingStateWithoutModel) {
 
 TEST(ChatControllerTest, ThrowsOnInvalidModelDuringInit) {
     EXPECT_THROW({
-        ChatController controller("no_model.gguf");
-    }, LLamaLoadError);
+                 ChatController controller("no_model.gguf");
+                 }, LLamaLoadError);
 }
 
 // Тесты для ChatTab
@@ -114,7 +114,7 @@ TEST(ChatTabTest, OnSendMessageCallback) {
     bool callback_called = false;
     std::string sent_text = "";
 
-    chat_tab.SetOnSendMessage([&](const std::string& text) {
+    chat_tab.SetOnSendMessage([&](const std::string &text) {
         callback_called = true;
         sent_text = text;
     });
@@ -125,7 +125,7 @@ TEST(ChatTabTest, OnSendMessageCallback) {
 
 // тесты LLamaInterface (с моделью)
 
-bool FileExists(const std::string& path) {
+bool FileExists(const std::string &path) {
     std::ifstream f(path);
     return f.good();
 }
@@ -153,7 +153,7 @@ TEST(LLamaIntegrationTest, LoadAndGenerate) {
     std::string response;
     ASSERT_NO_THROW({
         response = llama.Chat("Напиши цифру 1.");
-    });
+        });
 
     EXPECT_FALSE(response.empty());
 }
@@ -178,7 +178,7 @@ TEST(LLamaIntegrationTest, StreamGenerationCallback) {
     int token_count = 0;
     std::string accumulated_response = "";
 
-    auto token_callback = [&](const std::string& piece) -> bool {
+    auto token_callback = [&](const std::string &piece) -> bool {
         token_count++;
         accumulated_response += piece;
         return true;

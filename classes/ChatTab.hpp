@@ -18,8 +18,8 @@ using namespace ftxui;
 
 /// @brief одно сообщение в чате.
 struct ChatMessage {
-    std::string author;                    ///< имя автора ("Вы" или "AI").
-    std::string text;                      ///< текст сообщения.
+    std::string author; ///< имя автора ("Вы" или "AI").
+    std::string text; ///< текст сообщения.
     Color author_color = Color::CyanLight; ///< цвет имени автора.
 };
 
@@ -39,7 +39,7 @@ public:
      * @param text Ттекст сообщения.
      * @param author_color цвет имени (по умолчанию голубой).
      */
-    void AddMessage(const std::string& author, const std::string& text,
+    void AddMessage(const std::string &author, const std::string &text,
                     Color author_color = Color::CyanLight);
 
     /**
@@ -47,7 +47,7 @@ public:
      * используется для потокового вывода ответа.
      * @param token строка-токен.
      */
-    void AppendToLastMessage(const std::string& token);
+    void AppendToLastMessage(const std::string &token);
 
     /**
      * @brief включает/выключает режим генерации.
@@ -60,26 +60,26 @@ public:
      * @brief устанавливает callback, вызываемый при отправке сообщения.
      * @param callback функция, принимающая текст сообщения.
      */
-    void SetOnSendMessage(std::function<void(const std::string&)> callback);
+    void SetOnSendMessage(std::function<void(const std::string &)> callback);
 
 private:
-    void RebuildMessages();    ///< вызывает перерисовку интерфейса (отправляет событие).
-    void SendMessage();        ///< отправляет сообщение.
-    Element RenderMessages();  ///< создаёт элемент со всеми сообщениями.
+    void RebuildMessages(); ///< вызывает перерисовку интерфейса (отправляет событие).
+    void SendMessage(); ///< отправляет сообщение.
+    Element RenderMessages(); ///< создаёт элемент со всеми сообщениями.
 
-    std::vector<ChatMessage> messages_;  ///< все сообщения чата.
-    std::string input_text_;             ///< текст в поле ввода.
+    std::vector<ChatMessage> messages_; ///< все сообщения чата.
+    std::string input_text_; ///< текст в поле ввода.
 
-    Component input_component_;  ///< поле ввода.
-    Component send_button_;      ///< кнопка отправки.
-    Component messages_view_;    ///< область отображения сообщений.
+    Component input_component_; ///< поле ввода.
+    Component send_button_; ///< кнопка отправки.
+    Component messages_view_; ///< область отображения сообщений.
 
-    std::function<void(const std::string&)> on_send_;  ///< callback на отправку.
+    std::function<void(const std::string &)> on_send_; ///< callback на отправку.
 
-    int scroll_offset_ = 0;    ///< отступ прокрутки.
-    int content_height_ = 0;   ///< общая высота контента.
-    bool auto_scroll_ = true;  ///< автоматически прокручивать вниз при новых сообщениях.
+    int scroll_offset_ = 0; ///< отступ прокрутки.
+    int content_height_ = 0; ///< общая высота контента.
+    bool auto_scroll_ = true; ///< автоматически прокручивать вниз при новых сообщениях.
 
-    std::mutex messages_mutex_;            ///< мьютекс для безопасного доступа к messages_.
-    std::atomic<bool> generating_{false};  ///< флаг генерации ответа.
+    std::mutex messages_mutex_; ///< мьютекс для безопасного доступа к messages_.
+    std::atomic<bool> generating_{false}; ///< флаг генерации ответа.
 };

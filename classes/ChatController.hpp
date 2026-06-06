@@ -27,7 +27,7 @@ public:
      * @param model_path Путь к GGUF‑файлу языковой модели.
      * @throws LLamaLoadError Если модель не удалось загрузить.
      */
-    explicit ChatController(const std::string& model_path);
+    explicit ChatController(const std::string &model_path);
 
     ~ChatController();
 
@@ -35,22 +35,22 @@ public:
     std::shared_ptr<ChatTab> GetChatTab();
 
     /// @brief Возвращает ссылку на внутренний объект LLamaInterface.
-    LLamaInterface& GetLLama();
+    LLamaInterface &GetLLama();
 
     /// @brief Устанавливает указатель на CharList для получения JSON персонажа.
-    void SetCharList(CharList* char_list);
+    void SetCharList(CharList *char_list);
 
     /// @brief Устанавливает указатель на DiceRoll для получения последнего броска.
-    void SetDiceRoll(DiceRoll* dice_roll);
+    void SetDiceRoll(DiceRoll *dice_roll);
 
 private:
-    void OnUserSend(const std::string& text);          ///< Обработчик отправленного сообщения.
-    std::string BuildContext() const;                  ///< Формирует строку с персонажем и броском.
+    void OnUserSend(const std::string &text); ///< Обработчик отправленного сообщения.
+    std::string BuildContext() const; ///< Формирует строку с персонажем и броском.
 
-    LLamaInterface llama_;                             ///< Интерфейс к LLM.
-    std::shared_ptr<ChatTab> chat_tab_;                ///< Вкладка чата.
-    std::thread generation_thread_;                    ///< Поток для асинхронной генерации.
+    LLamaInterface llama_; ///< Интерфейс к LLM.
+    std::shared_ptr<ChatTab> chat_tab_; ///< Вкладка чата.
+    std::thread generation_thread_; ///< Поток для асинхронной генерации.
 
-    CharList* char_list_ = nullptr;   ///< Указатель на редактор персонажей.
-    DiceRoll* dice_roll_ = nullptr;   ///< Указатель на виджет броска кубика.
+    CharList *char_list_ = nullptr; ///< Указатель на редактор персонажей.
+    DiceRoll *dice_roll_ = nullptr; ///< Указатель на виджет броска кубика.
 };

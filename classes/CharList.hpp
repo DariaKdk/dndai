@@ -14,20 +14,20 @@ using namespace ftxui;
 
 /// @brief Данные персонажа D&D 5e.
 struct Character {
-    std::string name = "Новый персонаж";       ///< Имя персонажа.
-    std::string race = "Человек";              ///< Раса.
-    std::string char_class = "Воин";           ///< Класс.
-    int level = 1;                             ///< Уровень.
+    std::string name = "Новый персонаж"; ///< Имя персонажа.
+    std::string race = "Человек"; ///< Раса.
+    std::string char_class = "Воин"; ///< Класс.
+    int level = 1; ///< Уровень.
 
-    int str = 10, dex = 10, con = 10;          ///< Сила, Ловкость, Телосложение.
-    int intel = 10, wis = 10, cha = 10;        ///< Интеллект, Мудрость, Харизма.
+    int str = 10, dex = 10, con = 10; ///< Сила, Ловкость, Телосложение.
+    int intel = 10, wis = 10, cha = 10; ///< Интеллект, Мудрость, Харизма.
 
-    int hp_max = 10, hp_current = 10;          ///< Максимальные и текущие ОЗ.
-    int ac = 10;                               ///< Класс доспеха.
-    int speed = 30;                            ///< Скорость (в футах).
+    int hp_max = 10, hp_current = 10; ///< Максимальные и текущие ОЗ.
+    int ac = 10; ///< Класс доспеха.
+    int speed = 30; ///< Скорость (в футах).
 
-    std::vector<std::string> equipment;        ///< Список снаряжения.
-    std::string background;                    ///< Предыстория.
+    std::vector<std::string> equipment; ///< Список снаряжения.
+    std::string background; ///< Предыстория.
 };
 
 /**
@@ -43,13 +43,13 @@ public:
      * @brief Сохраняет всех персонажей в JSON‑файл.
      * @param path Путь к файлу
      */
-    void SaveToFile(const std::string& path) const;
+    void SaveToFile(const std::string &path) const;
 
     /**
      * @brief Загружает персонажей из JSON‑файла.
      * @param path Путь к файлу.
      */
-    void LoadFromFile(const std::string& path);
+    void LoadFromFile(const std::string &path);
 
     /**
      * @brief Возвращает JSON‑строку текущего выбранного персонажа.
@@ -58,11 +58,11 @@ public:
     std::string SaveToJson() const;
 
 private:
-    void SyncToCharacter();    ///< Сохраняет данные из полей ввода в объект Character.
-    void SyncFromCharacter();  ///< Загружает данные из текущего Character в поля ввода.
+    void SyncToCharacter(); ///< Сохраняет данные из полей ввода в объект Character.
+    void SyncFromCharacter(); ///< Загружает данные из текущего Character в поля ввода.
 
-    std::vector<Character> characters_;  ///< Список всех персонажей.
-    int selected_ = 0;                   ///< Индекс выбранного персонажа.
+    std::vector<Character> characters_; ///< Список всех персонажей.
+    int selected_ = 0; ///< Индекс выбранного персонажа.
 
     // Буферы для полей ввода
     std::string name_buf_, race_buf_, class_buf_, level_buf_;
@@ -72,8 +72,8 @@ private:
     std::string equip_buf_;
     std::string file_path_;
 
-    std::vector<std::string> equipment_;  ///< Временный список снаряжения для редактора.
-    int sel_equip_ = 0;                   ///< Выбранный элемент в списке снаряжения.
+    std::vector<std::string> equipment_; ///< Временный список снаряжения для редактора.
+    int sel_equip_ = 0; ///< Выбранный элемент в списке снаряжения.
 
     Component name_in_, race_in_, class_in_, level_in_;
     Component str_in_, dex_in_, con_in_, intel_in_, wis_in_, cha_in_;
@@ -86,6 +86,6 @@ private:
     Component save_btn_, load_btn_;
     Component add_equip_btn_, del_equip_btn_;
 
-    int scroll_offset_ = 0;    ///< Текущее смещение прокрутки
-    int content_height_ = 0;   ///< Высота контента
+    int scroll_offset_ = 0; ///< Текущее смещение прокрутки
+    int content_height_ = 0; ///< Высота контента
 };

@@ -9,6 +9,8 @@
  *
  * Требования: модель должна находиться в той же папке, что и исполняемый файл,
  * или путь можно задать в коде (см. main.cpp).
+ *
+ * Для работы необходимо скачать модель Falcon-H1-1.5B-Instruct-Q4_K_s.gguf с Hugging Face
  */
 
 #include <ftxui/component/component.hpp>
@@ -52,18 +54,18 @@ int main() {
     controller->SetDiceRoll(dice_roll_tab.get());
 
     // Компоненты вкладок
-    std::vector<Component> tab_components = { chat_tab, char_list_tab, dice_roll_tab };
+    std::vector<Component> tab_components = {chat_tab, char_list_tab, dice_roll_tab};
 
     auto tabs = Container::Tab(tab_components, &selected_tab);
     auto tab_menu = Menu(&tab_titles, &selected_tab, MenuOption::HorizontalAnimated());
 
-    auto layout = Container::Vertical({ tab_menu, tabs });
+    auto layout = Container::Vertical({tab_menu, tabs});
 
     auto renderer = Renderer(layout, [&] {
         return vbox({
-            tab_menu->Render() | hcenter | border,
-            tabs->Render() | flex,
-        }) | flex;
+                   tab_menu->Render() | hcenter | border,
+                   tabs->Render() | flex,
+               }) | flex;
     });
 
     screen.Loop(renderer);

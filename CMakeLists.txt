@@ -22,14 +22,14 @@ include(FetchContent)
 FetchContent_Declare(
         ftxui
         GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI.git
-        GIT_TAG        v6.1.9
+        GIT_TAG v6.1.9
 )
 FetchContent_MakeAvailable(ftxui)
 
 FetchContent_Declare(
         json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG        v3.11.3
+        GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(json)
 
@@ -41,14 +41,14 @@ set(GGML_SHARED OFF CACHE INTERNAL "" FORCE)
 set(LLAMA_SHARED OFF CACHE INTERNAL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 
-if(MSVC)
+if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:char8_t- /Zc:__cplusplus")
-endif()
+endif ()
 
 FetchContent_Declare(
         llama.cpp
         GIT_REPOSITORY https://github.com/ggml-org/llama.cpp.git
-        GIT_TAG        b9460
+        GIT_TAG b9460
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(llama.cpp)
